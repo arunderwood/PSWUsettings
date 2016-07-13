@@ -1,7 +1,27 @@
 param(
-  [string]$CheckName,
-  [switch]$ShowStatus = $false,
+  [string]$CheckName
+  ,
+  [ValidateRange(0,1)]
+  [Int]
+  $SetDeferUpgrade
+  ,
+  [ValidateRange(0,4)]
+  [Int]
+  $SetDeferUpdatePeriod
+  ,
+  [ValidateRange(0,8)]
+  [Int]
+  $SetDeferUpgradePeriod
+  ,
+  [ValidateRange(0,1)]
+  [Int]
+  $PauseDeferrals
+  ,
+  [switch]$ShowStatus = $false
+  ,
   [switch]$Reset = $false
+  ,
+  [switch]$Plain = $false
 )
 
 $WUregPath = "hklm:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
@@ -66,13 +86,77 @@ Function Get-RegistryValue {
       $regValue = (Get-ItemProperty -Path $Path -Name $Name).$Name
 
       # Write out the value of the regName.
-      Write-Output ($Name + " is set to " + $regValue)
+      if(-Not $Plain) {
+        Write-Output ($Name + " is set to " + $regValue)
+      }
+      Else{
+        Write-Output $regValue
+      }
     }
     ELSE{
       # The name does not exist
-      Write-Output ("The key " + $Name + " does not exist.")
+      if(-Not $Plain) {
+        Write-Output ("The key " + $Name + " does not exist.")
+      }
+      Else {
+        Write-Output "Null"
+      }
     }
   }
+
+}
+
+Function Set-RegistryValue {
+  param(
+    [Alias("PSPath")]
+    [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)]
+    [String]$Path
+    ,
+    [Parameter(Position = 1, Mandatory = $true)]
+    [String]$Name
+    ,
+    [Parameter(Position = 3, Mandatory = $true)]
+    [String]$Value
+    ,
+    [Switch]$PassThru
+  )
+
+  process {
+
+    #Test to see if each regPath/Name is valid
+    $nameExists = Test-RegistryValue -Path $Path -Name $Name
+
+    IF($nameExists) {
+      Set-ItemProperty -Path $Path -Name $Name -Value $Value
+    }
+    Else{
+      New-ItemProperty -Path $Path -Name $Name -Value $Value -PropertyType DWORD
+    }
+  }
+
+}
+
+if ($SetDeferUpgrade) {
+
+Set-RegistryValue -Path $WUregPath -Name DeferUpgrade -Value $SetDeferUpgrade
+
+}
+
+if ($SetDeferUpdatePeriod) {
+
+Set-RegistryValue -Path $WUregPath -Name DeferUpdatePeriod -Value $SetDeferUpdatePeriod
+
+}
+
+if ($SetDeferUpgradePeriod) {
+
+Set-RegistryValue -Path $WUregPath -Name DeferUpgradePeriod -Value $SetDeferUpgradePeriod
+
+}
+
+if ($SetPauseDeferrals) {
+
+Set-RegistryValue -Path $WUregPath -Name PauseDeferrals -Value $SetPauseDeferrals
 
 }
 

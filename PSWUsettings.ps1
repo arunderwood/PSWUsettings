@@ -1,4 +1,6 @@
 <#
+Written by Arunderwood - 7/13/16
+
 .SYNOPSIS
         This script is designed as a utility to get and set Windows Update configuration on Windows 10 machines.
     .DESCRIPTION

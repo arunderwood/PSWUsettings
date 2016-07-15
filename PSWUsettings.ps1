@@ -76,19 +76,19 @@ param(
   ,
   [ValidateRange(0,1)]
   [Int]
-  $SetDeferUpgrade
+  $SetDeferUpgrade = -1
   ,
   [ValidateRange(0,4)]
   [Int]
-  $SetDeferUpdatePeriod
+  $SetDeferUpdatePeriod = -1
   ,
   [ValidateRange(0,8)]
   [Int]
-  $SetDeferUpgradePeriod
+  $SetDeferUpgradePeriod = -1
   ,
   [ValidateRange(0,1)]
   [Int]
-  $SetPauseDeferrals
+  $SetPauseDeferrals = -1
   ,
   [switch]$Reset = $false
   ,
@@ -207,25 +207,25 @@ Function Set-RegistryValue {
 
 }
 
-if ($SetDeferUpgrade) {
+if ($SetDeferUpgrade -ne -1) {
 
 Set-RegistryValue -Path $WUregPath -Name DeferUpgrade -Value $SetDeferUpgrade
 
 }
 
-if ($SetDeferUpdatePeriod) {
+if ($SetDeferUpdatePeriod -ne -1) {
 
 Set-RegistryValue -Path $WUregPath -Name DeferUpdatePeriod -Value $SetDeferUpdatePeriod
 
 }
 
-if ($SetDeferUpgradePeriod) {
+if ($SetDeferUpgradePeriod -ne -1) {
 
 Set-RegistryValue -Path $WUregPath -Name DeferUpgradePeriod -Value $SetDeferUpgradePeriod
 
 }
 
-if ($SetPauseDeferrals) {
+if ($SetPauseDeferrals -ne -1) {
 
 Set-RegistryValue -Path $WUregPath -Name PauseDeferrals -Value $SetPauseDeferrals
 
